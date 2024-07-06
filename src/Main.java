@@ -1,12 +1,11 @@
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Scanner;
 
 
@@ -16,63 +15,65 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         int option = 0;
 
-        while (option != 7) {
-            System.out.println("========= Menú =========");
-            System.out.println("1. MXN");
-            System.out.println("2. USD");
-            System.out.println("3. EUR");
-            System.out.println("4. CLP");
-            System.out.println("6. ARS");
-            System.out.println("7. Salir");
-            System.out.print("Seleccione una opción: ");
-            option = scanner.nextInt();
+        while (true) {
+            System.out.println("Monedas disponibles: USD, EUR, GBP, JPY, MXN");
+            System.out.print("Ingresa la moneda de origen: ");
+            String origen = scanner.next().toUpperCase();
 
-            switch (option) {
-                case 1:
-                    getJson("MXN");
-                    scanner.nextInt();
-                    break;
-                case 2:
-                    getJson("USD");
-                    scanner.nextInt();
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    System.out.println("Este es un mensaje de ejemplo.");
-                    break;
-                case 5:
-                    System.out.println("¡Adiós!");
-                    break;
-                case 6:
-                    System.out.println("¡Adiós!");
-                    break;
-                default:
-                    System.out.println("Opción no válida. Inténtelo de nuevo.");
-                    break;
+            System.out.print("Ingresa la moneda de destino: ");
+            String destino = scanner.next().toUpperCase();
+
+            System.out.print("Ingresa la cantidad: ");
+            String cantidad = scanner.next().toUpperCase();
+
+            getEquivalente(limpiarEspacios(origen),destino,cantidad);
+
+            System.out.print("¿Quieres realizar otra conversión? (si/no): ");
+            String anotherConversion = scanner.next().toLowerCase();
+            if (!anotherConversion.equals("si")) {
+                break;
             }
         }
-    }
-    public static void getJson(String moneda) throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://v6.exchangerate-api.com/v6/41a3fc65d752c10bd4b0145b/latest/" + moneda))
-                .build();
-        HttpResponse<String> response = client
-                .send(request, HttpResponse.BodyHandlers.ofString());
-
-        String json = response.body();
-        System.out.println(json);
-
-
-        Gson gson = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
-                .create();
-        MonedaA miMoneda = gson.fromJson(json,MonedaA.class);
-        System.out.println(miMoneda);
 
     }
+    public static void getEquivalente (String origen, String destino, String cantidad) throws IOException {
+        try{
+            // Setting URL
+            String url_str = "https://v6.exchangerate-api.com/v6/41a3fc65d752c10bd4b0145b/pair/"
+                    + origen +"/" + destino + "/" + cantidad;
+
+            // Making Request
+            URL url = new URL(url_str);
+            HttpURLConnection request = (HttpURLConnection) url.openConnection();
+            request.connect();
+
+            // Convert to JSON
+            JsonParser jp = new JsonParser();
+            JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
+            JsonObject jsonobj = root.getAsJsonObject();
+
+            // Accessing object
+            String req_result = jsonobj.get("conversion_result").getAsString();
+            System.out.println(cantidad + " " + origen + " = " + req_result + " " + destino);
+
+        } catch (FileNotFoundException e){
+            System.out.println("Moneda invalida");
+            System.out.println("Por favor ingresa el codigo de moneda correctamente y sin espacios");
+
+        }
 
     }
+
+    public static String limpiarEspacios(String palabra) {
+        Scanner lineScanner = new Scanner(palabra);
+        while (lineScanner.hasNext()) {
+            String sinEspacios = lineScanner.next();
+            if (!sinEspacios.trim().isEmpty()) {
+                return sinEspacios;
+            }
+        }
+        return palabra;
+    }
+}
 
 

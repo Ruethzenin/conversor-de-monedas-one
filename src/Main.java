@@ -1,20 +1,13 @@
-import com.google.gson.*;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws IOException{
         Scanner scanner = new Scanner(System.in);
+        Conversor conversor = new Conversor();
         int option;
         String cantidad;
         String[] monedas = {"MXN", "USD", "EUR", "KRW", "JPY"};
-
-
         do {
-            // Mostrar el menú
             System.out.println("==== CONVERSOR DE MONEDAS ====");
             System.out.println("1. Mexican Peso ==>> United States Dollar");
             System.out.println("2. United States Dollar ==>> Mexican Peso");
@@ -27,57 +20,55 @@ public class Main {
             System.out.println("9. Salir");
             System.out.print("Seleccione una opción: ");
 
-            // Leer la opción del usuario
             option = scanner.nextInt();
 
-            // Realizar la acción correspondiente a la opción seleccionada
             switch (option) {
                 case 1:
                     System.out.println("Ingresa el valor que dedeas convertir");
                     cantidad = scanner.next();
-                    getEquivalente(monedas[0],monedas[1],cantidad);
+                    conversor.getEquivalente(monedas[0],monedas[1],cantidad);
                     option = otraConversion();
                     break;
                 case 2:
                     System.out.println("Ingresa el valor que dedeas convertir");
                     cantidad = scanner.next();
-                    getEquivalente(monedas[1],monedas[0],cantidad);
+                    conversor.getEquivalente(monedas[1],monedas[0],cantidad);
                     option = otraConversion();
                     break;
                 case 3:
                     System.out.println("Ingresa el valor que dedeas convertir");
                     cantidad = scanner.next();
-                    getEquivalente(monedas[0],monedas[4],cantidad);
+                    conversor.getEquivalente(monedas[0],monedas[4],cantidad);
                     option = otraConversion();
                     break;
                 case 4:
                     System.out.println("Ingresa el valor que dedeas convertir");
                     cantidad = scanner.next();
-                    getEquivalente(monedas[4],monedas[0],cantidad);
+                    conversor.getEquivalente(monedas[4],monedas[0],cantidad);
                     option = otraConversion();
                     break;
                 case 5:
                     System.out.println("Ingresa el valor que dedeas convertir");
                     cantidad = scanner.next();
-                    getEquivalente(monedas[0],monedas[3],cantidad);
+                    conversor.getEquivalente(monedas[0],monedas[3],cantidad);
                     option = otraConversion();
                     break;
                 case 6:
                     System.out.println("Ingresa el valor que dedeas convertir");
                     cantidad = scanner.next();
-                    getEquivalente(monedas[3],monedas[0],cantidad);
+                    conversor.getEquivalente(monedas[3],monedas[0],cantidad);
                     option = otraConversion();
                     break;
                 case 7:
                     System.out.println("Ingresa el valor que dedeas convertir");
                     cantidad = scanner.next();
-                    getEquivalente(monedas[0],monedas[2],cantidad);
+                    conversor.getEquivalente(monedas[0],monedas[2],cantidad);
                     option = otraConversion();
                     break;
                 case 8:
                     System.out.println("Ingresa el valor que dedeas convertir");
                     cantidad = scanner.next();
-                    getEquivalente(monedas[2],monedas[0],cantidad);
+                    conversor.getEquivalente(monedas[2],monedas[0],cantidad);
                     option = otraConversion();
                     break;
                 case 9:
@@ -90,22 +81,6 @@ public class Main {
             System.out.println();
 
         } while (option != 9);
-    }
-    public static void getEquivalente (String origen, String destino, String cantidad) throws IOException {
-        String url_str = "https://v6.exchangerate-api.com/v6/41a3fc65d752c10bd4b0145b/pair/"
-                + origen +"/" + destino + "/" + cantidad;
-
-        URL url = new URL(url_str);
-        HttpURLConnection request = (HttpURLConnection) url.openConnection();
-        request.connect();
-
-        JsonParser jp = new JsonParser();
-        JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
-        JsonObject jsonobj = root.getAsJsonObject();
-
-        String req_result = jsonobj.get("conversion_result").getAsString();
-        System.out.println();
-        System.out.println(cantidad + " " + origen + " = " + req_result + " \n");
     }
 
     public static int otraConversion(){

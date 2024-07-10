@@ -25,3 +25,4 @@ En este proyecto puedes hacer conversiones entre diferentes divisas como "MXN", 
 - Java 11 o superior
 - IntelliJ IDEA (o cualquier otro IDE compatible con Java)
 - Conexión a internet para acceder a la API de Exchange Rate
+- Clave de API válida para la API de tipo de cambio (reemplazar YOUR-API-KEY en el código)

@@ -9,7 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class Conversor {
-    private final String API_KEY = "41a3fc65d752c10bd4b0145b";
+    private final String API_KEY = "Your_Api_Key";
     private final String URL_BASE = "https://v6.exchangerate-api.com/v6/";
     public void getEquivalente (String origen, String destino, String cantidad) throws IOException {
         String url_str = URL_BASE+API_KEY+"/pair/"
